@@ -39,13 +39,40 @@ int main(int argc, char* argv[]) {
 	else {
 		firstRead = offset;
 	}
-
-	FILE* fpCopy;
-	char* fname = "TEMP.tmp";
-	fpCopy = fopen(fname, "w+");
-	memset(buf);
-	for(int i=0; i<firstRead; i++) {
-		fread(
+	if(firstRead <= 0) {
+		firstRead = 0;
+		byte = offset;
 	}
 
+	FILE* fpCopy;
+	char* fileName = "TEMP.tmp";
+	if((fpCopy = fopen(fileName, "w+")) == NULL) {
+		fprintf(stderr, "open error for %s!\n", fileName);
+		exit(1);
+	}
+
+	for(long long i=0; i<firstRead; i++) {
+		memset(buf, 0, sizeof(buf));
+		fread(buf, sizeof(char), 1, fp);
+		fwrite(buf, sizeof(char), 1, fpCopy);
+	}
+	fread(buf, sizeof(char), byte, fp);
+	while(feof(fp) == 0) {
+		memset(buf, 0, sizeof(buf));
+		size = fread(buf, sizeof(char), BUFFER_SIZE, fp);
+		if(size < BUFFER_SIZE) {
+			fwrite(buf, sizeof(char), size, fpCopy);
+			break;
+		}
+		fwrite(buf, sizeof(char), strlen(buf), fpCopy);
+	}
+	rewind(fpCopy);
+	freopen(argv[3], "w+", fp);
+	while(fgets(buf, BUFFER_SIZE, fpCopy) != NULL) {
+		fputs(buf, fp);
+	}
+	fclose(fpCopy);
+	remove(fileName);
+	fclose(fp);
+	exit(0);
 }
