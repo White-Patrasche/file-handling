@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 			break;
 		}
 		fwrite(buf, sizeof(buf), 1, copy);
-		memset(buf, 0, BUFFER_SIZE);
+		memset(buf, 0, sizeof(buf));
 	}
 
 
