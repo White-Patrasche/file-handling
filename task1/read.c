@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 		fprintf(stderr, "reading error\n");
 		exit(1);
 	}
-	printf("start printing data\n%s\nprinting ended\n", buf);
+	printf("%s",buf);
 	close(fd);
 	exit(0);
 }
