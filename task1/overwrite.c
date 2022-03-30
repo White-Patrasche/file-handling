@@ -4,10 +4,7 @@
 #include <fcntl.h>
 #include <string.h>
 
-#define BUFFER_SIZE 1024
-
 int main(int argc, char* argv[]) {
-	char buf[BUFFER_SIZE];
 	if(argc != 4) {
 		fprintf(stderr, "your excution parameter is not enough or too many\n");
 		exit(1);
@@ -21,9 +18,8 @@ int main(int argc, char* argv[]) {
 		fprintf(stderr, "file seek error\n");
 		exit(1);
 	}
-	strcpy(buf, argv[2]);
 
-	write(fd, buf, strlen(buf));
+	write(fd, argv[2], strlen(argv[2]));
 	close(fd);
 	exit(1);
 }

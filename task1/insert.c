@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 			exit(1);
 		} //make temp file
 		fseek(fp1, 0, SEEK_SET);
-		for(long long i=0; i<atoll(argv[1]); i++) {
+		for(long long i=0; i<=atoll(argv[1]); i++) {
 			memset(buf, 0, sizeof(buf));
 			fread(buf, sizeof(char), 1, fp1);
 			fwrite(buf, sizeof(char), 1, fp2);
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 		}
 		rewind(fp1);
 		rewind(fp2);
-		while(fgets(buf, BUFFER_SIZE, fp2) != NULL) {
+		while(fgets(buf, BUFFER_SIZE, fp2) != NULL) { //it's bigger than original data, so it't not problem
 			fputs(buf, fp1);
 		}
 		fclose(fp2);

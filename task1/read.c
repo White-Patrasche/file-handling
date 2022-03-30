@@ -27,6 +27,13 @@ int main(int argc, char* argv[]) {
 	}
 	else if(byte < 0) {
 		byte = -byte;
+		if(offset - byte < 0) {
+			for(int i=0; i<offset; i++) {
+				read(fd, buf, 1);
+				printf("%s",buf);
+			}
+			exit(0);
+		}
 		if((fsize = lseek(fd, offset - byte, SEEK_SET)) < 0) {
 			fprintf(stderr, "lseek error\n");
 			exit(1);

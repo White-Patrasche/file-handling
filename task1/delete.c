@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
 	long long byte = atoll(argv[2]);
 	long long size;
 	fseek(fp, 0, SEEK_END);
-	size = ftell(fp);
+	size = ftell(fp); //count file size
 	fseek(fp, 0, SEEK_SET);
 	clearerr(fp); //eof flag off
 
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	for(long long i=0; i<firstRead; i++) {
+	for(long long i=0; i<=firstRead; i++) {
 		memset(buf, 0, sizeof(buf));
 		fread(buf, sizeof(char), 1, fp);
 		fwrite(buf, sizeof(char), 1, fpCopy);
