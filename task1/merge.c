@@ -32,6 +32,7 @@ int main(int argc, char* argv[]) {
 		write(fd3, buf, rd_size);
 		memset(buf, 0, sizeof(buf));
 	}
+	memset(buf, 0, sizeof(buf));
 	while((rd_size = read(fd2, buf, BUFFER_SIZE-1)) > 0) {
 		write(fd3, buf, rd_size);
 		memset(buf, 0, sizeof(buf));
