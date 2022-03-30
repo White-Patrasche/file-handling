@@ -4,7 +4,7 @@
 #include <string.h>
 #include <fcntl.h>
 
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 1
 
 int main(int argc, char* argv[]) {
 	int fd;
@@ -33,17 +33,17 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	else {
-		if((fsize = lseek(fd, offset, SEEK_SET)) < 0) {
+		if((fsize = lseek(fd, offset+1, SEEK_SET)) < 0) { //if byte is positive num, must read from offset+1
 			fprintf(stderr, "lseek error\n");
 			exit(1);
 		}
 	}
 	memset(buf, 0, sizeof(buf));
-	if(read(fd, buf, byte) < 0) {
-		fprintf(stderr, "reading error\n");
-		exit(1);
+	for(int i=0; i<byte; i++) {
+		if(read(fd, buf, 1) == 0) break; //EOF
+		printf("%s",buf);
 	}
-	printf("%s",buf);
+	
 	close(fd);
 	exit(0);
 }
