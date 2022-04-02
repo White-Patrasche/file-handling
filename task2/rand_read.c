@@ -39,16 +39,18 @@ int main(int argc, char **argv)
 		fprintf(stderr, "open error for %s.\n", argv[1]);
 		exit(1);
 	}
-	num_of_records = lseek(fd, 0, SEEK_END) / 200;
+	num_of_records = lseek(fd, 0, SEEK_END) / sizeof(record);
+	read_order_list = malloc(sizeof(int)*num_of_records);
 
 	GenRecordSequence(read_order_list, num_of_records);
 	time_t start, end;
 	start = clock();
 	for(int i=0; i<num_of_records; i++) {
 		record Data;
-		lseek(fd, read_order_list[i]*200, SEEK_SET);
+		lseek(fd, read_order_list[i]*sizeof(Data), SEEK_SET);
 		read(fd, &Data, sizeof(Data));
 	}
+	free(read_order_list);
 	close(fd);
 	end = clock();
 	printf("%ld usec\n",end - start);
