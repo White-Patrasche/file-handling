@@ -18,11 +18,13 @@ typedef struct student_record {
 	int id;
 	char major[charMAX];
 	char dummyData[charMAX];
+	char dummy[100];
 }record;
 
 int main(int argc, char **argv)
 {
 	int fd;
+	time_t start, end;
 	if(argc < 2) {
 		fprintf(stderr, "Your input is not enough to excution.\n");
 		exit(1);
@@ -43,7 +45,6 @@ int main(int argc, char **argv)
 	read_order_list = malloc(sizeof(int)*num_of_records);
 
 	GenRecordSequence(read_order_list, num_of_records);
-	time_t start, end;
 	start = clock();
 	for(int i=0; i<num_of_records; i++) {
 		record Data;

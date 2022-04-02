@@ -12,10 +12,12 @@ typedef struct student_record {
 	int id; //4
 	char major[charMAX]; //32
 	char dummy[charMAX]; //32
+	char dummy_data[100];
 }record;
 
 int main(int argc, char **argv) {
 	int fd;
+	clock_t start, end;
 	if(argc < 2) {
 		fprintf(stderr, "Your input is not enough to excution.");
 		exit(1);
@@ -29,16 +31,14 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "open error for %s.", argv[1]);
 		exit(1);
 	}
-	clock_t start, end;
-	start = clock();
+
 	off_t file_size = lseek(fd, 0, SEEK_END); //check file size
 	lseek(fd, 0, SEEK_SET); //file current position
-	for(int i=0; i<file_size; i+=sizeof(record)) {
-		record Data;
-		read(fd, &Data, sizeof(record));
-		/*
-		printf("Name : %s, ID : %d, Major : %s\n", Data.name, Data.id, Data.major);
-		*/
+
+	start = clock();
+	int recordSize = sizeof(record);
+	for(int i=0; i<(file_size/recordSize); i++) {
+		read(fd, &Data, recordSize);
 	}
 	close(fd);
 	end = clock();

@@ -11,6 +11,7 @@ typedef struct student_record {
 	int id; //4
 	char major[charMAX]; //32
 	char dummydata[charMAX]; //32
+	char dummy[100];
 }record;
 
 int main(int argc, char **argv)
@@ -31,7 +32,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "open error for %s", argv[2]);
 		exit(1);
 	}
-	for(int i=1; i<=atoi(argv[1]); i++) { //
+	for(long long i=1; i<=atoll(argv[1]); i++) { //
 		record inputData;
 		strcpy(inputData.name, "sanghyeon");
 		inputData.id = 20193010+i;
@@ -40,6 +41,7 @@ int main(int argc, char **argv)
 		//write(fd, &inputData, 200); //200 bytes records
 		write(fd, &inputData, sizeof(record));
 	}
+	record T;
 	close(fd);
 
 	return 0;
