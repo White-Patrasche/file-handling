@@ -17,8 +17,7 @@ typedef struct student_record {
 	char name[charMAX];
 	int id;
 	char major[charMAX];
-	char dummyData[charMAX];
-	char dummy[100];
+	char dummy[200-charMAX*2-sizeof(int)];
 }record;
 
 int main(int argc, char **argv)
@@ -51,9 +50,9 @@ int main(int argc, char **argv)
 		lseek(fd, read_order_list[i]*sizeof(Data), SEEK_SET);
 		read(fd, &Data, sizeof(Data));
 	}
+	end = clock();
 	free(read_order_list);
 	close(fd);
-	end = clock();
 	printf("%ld usec\n",end - start);
 
 	return 0;
