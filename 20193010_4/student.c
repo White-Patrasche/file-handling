@@ -94,17 +94,17 @@ void unpack(const char *recordbuf, STUDENT *s) {
 
 void pack(char *recordbuf, const STUDENT *s) {
     memcpy(recordbuf, s->id, ID_LEN);
-    strcpy(recordbuf + ID_LEN, '#');
+    memcpy(recordbuf + ID_LEN, "#", 1);
     memcpy(recordbuf + 1 + ID_LEN, s->name, NAME_LEN);
-    strcpy(recordbuf + 1 + ID_LEN + NAME_LEN, '#');
+    memcpy(recordbuf + 1 + ID_LEN + NAME_LEN, "#", 1);
     memcpy(recordbuf + 2 + ID_LEN + NAME_LEN, s->dept, DEPT_LEN);
-    strcpy(recordbuf + 2 + ID_LEN + NAME_LEN + DEPT_LEN, '#');
+    memcpy(recordbuf + 2 + ID_LEN + NAME_LEN + DEPT_LEN, "#", 1);
     memcpy(recordbuf + 3 + ID_LEN + NAME_LEN + DEPT_LEN, s->addr, ADDR_LEN);
-    strcpy(recordbuf + 3 + ID_LEN + NAME_LEN + DEPT_LEN + ADDR_LEN, '#');
+    memcpy(recordbuf + 3 + ID_LEN + NAME_LEN + DEPT_LEN + ADDR_LEN, "#", 1);
     memcpy(recordbuf + 4 + ID_LEN + NAME_LEN + DEPT_LEN + ADDR_LEN, s->email,
            EMAIL_LEN);
-    strcpy(recordbuf + 4 + ID_LEN + NAME_LEN + DEPT_LEN + ADDR_LEN + EMAIL_LEN,
-           '#');
+    memcpy(recordbuf + 4 + ID_LEN + NAME_LEN + DEPT_LEN + ADDR_LEN + EMAIL_LEN,
+           "#", 1);
 }
 
 void searchRecord(FILE *fp, FIELD f, char *keyval) {
