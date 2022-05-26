@@ -46,45 +46,54 @@ FIELD getFieldID(char *fieldname);
 
 void main(int argc, char *argv[]) {
     FILE *fp;  // 모든 file processing operation은 C library를 사용할 것
-    if (argc < 4) {
-        fprintf(stderr, "input is too small!\n");
-        return;
-    }
 
-    if (!strcmp(argv[1], "-a")) {
-        if ((fp = fopen(argv[2], "w")) == NULL) {
-            fprintf(stderr, "can't open file!");
-            return;
-        }
-        appendRecord(fp, argv[3], argv[4], argv[5], argv[6], argv[7]);
-    } else if (!strcmp(argv[1], "-s")) {
-        if ((fp = fopen(argv[2], "w+")) == NULL) {
-            fprintf(stderr, "can't open file!");
-            return;
-        }
-        char tempstr1[STRING_LEN];
-        char tempstr2[STRING_LEN];
-        memset(tempstr1, 0, sizeof(STRING_LEN) * sizeof(char));
-        memset(tempstr1, 0, sizeof(STRING_LEN) * sizeof(char));
-        int cnt = 0;
-        while (TRUE) {
-            if (argv[3][cnt] == '=') break;
-            cnt++;
-        }
-        memcpy(tempstr1, argv[3], cnt * sizeof(char));
-        memcpy(tempstr2, argv[3] + (cnt + 1),
-               (strlen(argv[3]) - (cnt + 1)) * sizeof(char));
-        searchRecord(fp, getFieldID(tempstr1), tempstr2);
-    } else {
-        fprintf(stderr, "wrong input option!");
-        return;
-    }
+    char *tempstr[] = {"test.txt", "20193010", "NAME", "DEPT", "ADDR", "EMAIL"};
+
+    fp = fopen(tempstr[0], "w+");
+    appendRecord(fp, tempstr[1], tempstr[2], tempstr[3], tempstr[4],
+                 tempstr[5]);
+    // fp = fopen(tempstr[0], "w+");
+    // searchRecord(fp, getFieldID("NAME"), "sanghyeon");
+
+    // if (argc < 4) {
+    //     fprintf(stderr, "input is too small!\n");
+    //     return;
+    // }
+
+    // if (!strcmp(argv[1], "-a")) {
+    //     if ((fp = fopen(argv[2], "w")) == NULL) {
+    //         fprintf(stderr, "can't open file!");
+    //         return;
+    //     }
+    //     appendRecord(fp, argv[3], argv[4], argv[5], argv[6], argv[7]);
+    // } else if (!strcmp(argv[1], "-s")) {
+    //     if ((fp = fopen(argv[2], "w+")) == NULL) {
+    //         fprintf(stderr, "can't open file!");
+    //         return;
+    //     }
+    //     char tempstr1[STRING_LEN];
+    //     char tempstr2[STRING_LEN];
+    //     memset(tempstr1, 0, sizeof(STRING_LEN) * sizeof(char));
+    //     memset(tempstr1, 0, sizeof(STRING_LEN) * sizeof(char));
+    //     int cnt = 0;
+    //     while (TRUE) {
+    //         if (argv[3][cnt] == '=') break;
+    //         cnt++;
+    //     }
+    //     memcpy(tempstr1, argv[3], cnt * sizeof(char));
+    //     memcpy(tempstr2, argv[3] + (cnt + 1),
+    //            (strlen(argv[3]) - (cnt + 1)) * sizeof(char));
+    //     searchRecord(fp, getFieldID(tempstr1), tempstr2);
+    // } else {
+    //     fprintf(stderr, "wrong input option!");
+    //     return;
+    // }
     fclose(fp);
     return;
 }
 
 void unpack(const char *recordbuf, STUDENT *s) {
-    memcpy(s->id, recordbuf, ID_LEN);
+    memcpy(s->id, recordbuf, ID_LEN - 1);
     memcpy(s->name, recordbuf + 1 + ID_LEN, NAME_LEN);
     memcpy(s->dept, recordbuf + 2 + ID_LEN + NAME_LEN, DEPT_LEN);
     memcpy(s->addr, recordbuf + 3 + ID_LEN + NAME_LEN + DEPT_LEN, ADDR_LEN);
@@ -108,57 +117,69 @@ void pack(char *recordbuf, const STUDENT *s) {
 }
 
 void searchRecord(FILE *fp, FIELD f, char *keyval) {
-    STUDENT stu;
+    STUDENT *newStudent = (STUDENT *)malloc(sizeof(STUDENT));
     int header[2];
     fseek(fp, 0, SEEK_SET);
     fread(header, sizeof(int), 2, fp);
     for (int i = 0; i < header[0]; i++) {
-        if (!readRecord(fp, &stu, i)) {
-            fprintf(stderr, "searching error!");
+        if (!readRecord(fp, newStudent, i)) {
+            fprintf(stderr, "searching error!\n");
             return;
         }
         switch (f) {
             case ID:
-                if (!strcmp(keyval, stu.id)) printRecord(&stu);
+                if (!strcmp(keyval, newStudent->id)) printRecord(newStudent);
                 break;
             case NAME:
-                if (!strcmp(keyval, stu.name)) printRecord(&stu);
+                if (!strcmp(keyval, newStudent->name)) printRecord(newStudent);
                 break;
             case DEPT:
-                if (!strcmp(keyval, stu.dept)) printRecord(&stu);
+                if (!strcmp(keyval, newStudent->dept)) printRecord(newStudent);
                 break;
             case ADDR:
-                if (!strcmp(keyval, stu.addr)) printRecord(&stu);
+                if (!strcmp(keyval, newStudent->addr)) printRecord(newStudent);
                 break;
             case EMAIL:
-                if (!strcmp(keyval, stu.email)) printRecord(&stu);
+                if (!strcmp(keyval, newStudent->email)) printRecord(newStudent);
                 break;
         }
     }
+    free(newStudent);
 }
 
 int appendRecord(FILE *fp, char *id, char *name, char *dept, char *addr,
                  char *email) {
-    STUDENT newStudent;
+    STUDENT *newStudent = (STUDENT *)malloc(sizeof(STUDENT));
     char recordbuf[RECORD_SIZE];
     int header[2];
 
     // newStudent init
-    strcpy(newStudent.id, id);
-    strcpy(newStudent.name, name);
-    strcpy(newStudent.dept, dept);
-    strcpy(newStudent.addr, addr);
-    strcpy(newStudent.email, email);
+    strcpy(newStudent->id, id);
+    strcpy(newStudent->name, name);
+    strcpy(newStudent->dept, dept);
+    strcpy(newStudent->addr, addr);
+    strcpy(newStudent->email, email);
+
+    // here
+    fseek(fp, 0, SEEK_SET);
+    printf("fread:%d\n", fread(header, sizeof(int), 2, fp));
+    // printf("%d %d\n", header[0], header[1]);
+    // here
 
     // if file is empty
-    if (!fread(header, sizeof(int), 2, fp)) {
+    fseek(fp, 0, SEEK_SET);
+    if (fread(header, sizeof(int), 2, fp) != sizeof(int) * 2) {
+        // here
+        printf("emtpy?");
+        // here
         header[0] = 1;
         header[1] = -1;
+        fseek(fp, 0, SEEK_SET);
         if (!fwrite(header, sizeof(int) * 2, 1, fp)) {
             fprintf(stderr, "new record header save error!");
             return 0;
         }
-        if (!writeRecord(fp, &newStudent, 0)) {
+        if (!writeRecord(fp, newStudent, 0)) {
             fprintf(stderr, "record writing error!");
             return 0;
         }
@@ -167,14 +188,15 @@ int appendRecord(FILE *fp, char *id, char *name, char *dept, char *addr,
         header[0]++;
         fseek(fp, 0, SEEK_SET);
         if (!fwrite(header, sizeof(int) * 2, 1, fp)) {
-            fprintf(stderr, "new record header save error!");
+            fprintf(stderr, "new record header save error!\n");
             return 0;
         }
-        if (!writeRecord(fp, &newStudent, rrn + 1)) {
-            fprintf(stderr, "record writing error!");
+        if (!writeRecord(fp, newStudent, rrn + 1)) {
+            fprintf(stderr, "record writing error!\n");
             return 0;
         }
     }
+    free(newStudent);
 }
 
 int readRecord(FILE *fp, STUDENT *s, int rrn) {
@@ -182,7 +204,7 @@ int readRecord(FILE *fp, STUDENT *s, int rrn) {
     char recordbuf[RECORD_SIZE];
 
     if (fread(recordbuf, RECORD_SIZE, 1, fp) == 0) {
-        fprintf(stderr, "Reading error in readRecord function!");
+        fprintf(stderr, "Reading error in readRecord function!\n");
         return 0;
     }
     unpack(recordbuf, s);
@@ -190,9 +212,14 @@ int readRecord(FILE *fp, STUDENT *s, int rrn) {
 }
 
 int writeRecord(FILE *fp, const STUDENT *s, int rrn) {
-    fseek(fp, sizeof(int) * 2 + rrn * RECORD_SIZE, SEEK_SET);
     char recordbuf[RECORD_SIZE];
     pack(recordbuf, s);
+    // here
+    unpack(recordbuf, s);
+    printRecord(s);
+    printf("%s\n", recordbuf);
+    // here
+    fseek(fp, sizeof(int) * 2 + rrn * RECORD_SIZE, SEEK_SET);
     if (fwrite(recordbuf, sizeof(RECORD_SIZE), 1, fp) == 0) {
         fprintf(stderr, "Writing error in writeRecord function!");
         return 0;
@@ -212,7 +239,7 @@ FIELD getFieldID(char *fieldname) {
     } else if (!strcmp(fieldname, "EMAIL")) {
         return EMAIL;
     } else {  //예외 상황(없을 경우를 대비)
-        return -1;
+        return ID;
     }
 }
 
